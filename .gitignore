@@ -11,10 +11,20 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
 *.local
+supabase/.temp/
+supabase/.branches/
+android/local.properties
+android/.gradle/
+android/key.properties
+ios/Pods/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
 
 # Editor directories and files
 .vscode/*
@@ -28,5 +38,3 @@ dist-ssr
 *.sw?
 
 .env
-.vite
-base44/.app.jsonc

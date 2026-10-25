@@ -1,41 +1,28 @@
-# Bestfoods
+# Best Foods
 
-**Welcome to your Base44 project** 
+Flutter app (iOS + Android) with a Supabase backend and Stripe payments.
 
-**About**
+## Backend setup (Supabase)
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+1. Create a Supabase project and link it: `supabase link --project-ref <ref>`.
+2. `supabase db push`, then run `supabase/seed.sql` (menu items). Add your restaurant rows to `locations` (template in the seed file) via SQL or the in-app admin panel.
+3. Enable anonymous sign-ins (Auth settings; also set in `supabase/config.toml`).
+4. Set function secrets:
+   `supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=... WEBHOOK_SECRET=... RESEND_API_KEY=... FROM_EMAIL=...`
+5. Deploy: `supabase functions deploy create-order stripe-webhook order-status-notification delete-account`.
+6. Stripe: add a webhook to `<project>/functions/v1/stripe-webhook` for `payment_intent.succeeded` and `payment_intent.payment_failed`.
+7. Supabase Database Webhook on `orders` UPDATE -> `order-status-notification`, with header `x-webhook-secret: <WEBHOOK_SECRET>`.
+8. Admin: create an email/password user, then `update profiles set role='admin' where id='<user id>'`.
+   In the app, long-press the title on the Settings screen to open the admin panel.
 
-This project contains everything you need to run your app locally.
-
-**Edit the code in your local development environment**
-
-Any change pushed to the repo will also be reflected in the Base44 Builder.
-
-**Prerequisites:** 
-
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+## Run
 
 ```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
-
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
+flutter pub get
+flutter run \
+  --dart-define=SUPABASE_URL=https://<ref>.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=<publishable key> \
+  --dart-define=STRIPE_PUBLISHABLE_KEY=pk_...
 ```
 
-Run the app: `npm run dev`
-
-**Publish your changes**
-
-Open [Base44.com](http://Base44.com) and click on Publish.
-
-**Docs & Support**
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+Build: `flutter build apk` / `flutter build ipa` (iOS requires macOS + Xcode).

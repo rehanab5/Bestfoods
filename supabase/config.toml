@@ -1,0 +1,10 @@
+project_id = "bestfoods"
+
+[auth]
+enable_anonymous_signins = true
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.order-status-notification]
+verify_jwt = false
