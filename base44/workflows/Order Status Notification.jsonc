@@ -1,0 +1,41 @@
+{
+  "name": "Order Status Notification",
+  "description": "Sends an email to the customer whenever their order status changes (preparing, ready, delivered)",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Order",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.changed_fields | index(\"status\") != null and .trigger.data.status != .trigger.old_data.status and (.trigger.data.status == \"preparing\" or .trigger.data.status == \"ready\" or .trigger.data.status == \"delivered\") }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "order_status_notification",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_notification": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendOrderStatusNotification",
+            "args": {
+              "order_id": "${ .trigger.data.id }",
+              "status": "${ .trigger.data.status }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Enviar notificaci\u00f3n de estado",
+            "description": "Email al cliente sobre el nuevo estado del pedido"
+          }
+        }
+      }
+    ]
+  }
+}
